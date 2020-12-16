@@ -153,6 +153,9 @@ specific input and produces a specific output. To add `Steps` to a `Task` you
 define a `steps` field (required) containing a list of desired `Steps`. The order in
 which the `Steps` appear in this list is the order in which they will execute.
 
+一个step是一个根据给定输入执行特定工具并产生特定输出的容器镜像的引用。若要增加Steps到一个Task，
+你需要定一个steps属性，其包含一个Steps的列表。你声明的step的顺序就是他们的执行顺序。
+
 The following requirements apply to each container image referenced in a `steps` field:
 
 - The container image must abide by the [container contract](./container-contract.md).
