@@ -7,11 +7,11 @@ weight: 1
 # Tasks
 
 - [介绍](#介绍)
-- [配置一个`Task`](#配置Task)
-  - [`Task` vs. `ClusterTask`](#Task VS ClusterTask)
+- [配置`Task`](#配置Task)
+  - [`Task` vs. `ClusterTask`](#Task和ClusterTask)
   - [定义`Steps`](#定义Steps)
     - [预留目录](#预留目录)
-    - [Running scripts within `Steps`](#running-scripts-within-steps)
+    - [在`Steps`里面执行脚本](#在Steps里面执行脚本)
     - [Specifying a timeout](#specifying-a-timeout)
   - [Specifying `Parameters`](#specifying-parameters)
   - [Specifying `Resources`](#specifying-resources)
@@ -46,7 +46,7 @@ weight: 1
 
 - [Parameters](#specifying-parameters)
 - [Resources](#specifying-resources)
-- [Steps](#defining-steps)
+- [Steps](#定义Steps)
 - [Workspaces](#specifying-workspaces)
 - [Results](#emitting-results)
 
@@ -59,7 +59,7 @@ weight: 1
   - [`kind`][k8s文档] - 定义资源类型。比如`Task`
   - [`metadata`][k8s文档] - 定义元数据，唯一标示一个`Task`对象。比如 `name`
   - [`spec`][k8s文档] - 配置`Task`对象详细的配置信息
-  - [`steps`](#defining-steps) - 定义一个或者多个容器镜像去执行`Task`
+  - [`steps`](#定义Steps) - 定义一个或者多个容器镜像去执行`Task`
 - 可选选项:
   - [`description`](#adding-a-description) - `Task`的描述信息.
   - [`params`](#specifying-parameters) - `Task`的执行参数.
@@ -114,7 +114,7 @@ spec:
       emptyDir: {}
 ```
 
-### Task VS ClusterTask
+### Task和ClusterTask
 
 `ClusterTask`是可以跨命名空间的特殊`Task`
 `ClusterTask`的定义、属性等和`Task`完全一样，因此文档对于`Task`的描述同样适用于`ClusterTask`
@@ -154,21 +154,18 @@ spec:
 
 以下为预留目录:
 
-* `/workspace` - This directory is where [resources](#resources) and [workspaces](#workspaces)
-  are mounted. Paths to these are available to `Task` authors via [variable substitution](variables.md)
-* `/tekton` - This directory is used for Tekton specific functionality:
-    * `/tekton/results` is where [results](#results) are written to.
-      The path is available to `Task` authors via [`$(results.name.path)`](variables.md)
+* `/workspace` - 这个目录是[resources](#resources)和[workspaces](#workspaces)被挂载的路径。
+`Task`可以根据[variable substitution](variables.md)获取Path
+* `/tekton` - 这个目录有以下特定作用:
+    * `/tekton/results`[results](#results)写入的路径。通过[`$(results.name.path)`](variables.md)可以获得
     * There are other subfolders which are [implementation details of Tekton](developers/README.md#reserved-directories)
       and **users should not rely on their specific behavior as it may change in the future**
 
-#### Running scripts within `Steps`
+#### 在Steps里面执行脚本
 
-A step can specify a `script` field, which contains the body of a script. That script is
-invoked as if it were stored inside the container image, and any `args` are passed directly
-to it.
+step可以指定`script`属性，内容包含一段可执行脚本。脚本可以被调用当我们存储进容器里面，同时参数将会被透传
 
-**Note:** If the `script` field is present, the step cannot also contain a `command` field.
+**Note:** 如果指定了`script`属性, step不能包含`command`属性
 
 Scripts that do not start with a [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix))
 line will have the following default preamble prepended:
