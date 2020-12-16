@@ -43,6 +43,8 @@ define and arrange in a specific order of execution as part of your continuous i
 A `Task` executes as a Pod on your Kubernetes cluster. A `Task` is available within a specific
 namespace, while a `ClusterTask` is available across the entire cluster.
 
+一个Task是一个我们定义的并且有执行顺序的属于持续集成一部分的Steps的集合
+
 A `Task` declaration includes the following elements:
 
 - [Parameters](#specifying-parameters)
