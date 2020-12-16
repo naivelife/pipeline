@@ -8,7 +8,7 @@ weight: 1
 
 - [介绍](#介绍)
 - [配置`Task`](#配置Task)
-  - [`Task` vs. `ClusterTask`](#Task和ClusterTask)
+  - [`Task` vs `ClusterTask`](#Task和ClusterTask)
   - [定义`Steps`](#定义Steps)
     - [预留目录](#预留目录)
     - [在`Steps`里面执行脚本](#在Steps里面执行脚本)
