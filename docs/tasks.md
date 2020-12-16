@@ -7,10 +7,10 @@ weight: 1
 # Tasks
 
 - [介绍](#介绍)
-- [Configuring a `Task`](#configuring-a-task)
-  - [`Task` vs. `ClusterTask`](#task-vs-clustertask)
-  - [Defining `Steps`](#defining-steps)
-    - [Reserved directories](#reserved-directories)
+- [配置一个`Task`](#配置Task)
+  - [`Task` vs. `ClusterTask`](#Task VS ClusterTask)
+  - [定义`Steps`](#定义Steps)
+    - [预留目录](#预留目录)
     - [Running scripts within `Steps`](#running-scripts-within-steps)
     - [Specifying a timeout](#specifying-a-timeout)
   - [Specifying `Parameters`](#specifying-parameters)
@@ -42,7 +42,7 @@ weight: 1
 `Task`是`Steps`的集合，一个`Task`会起一个Pod去执行。`Task`在指定命名空间可以访问，
 `ClusterTask`可以跨命名空间访问。
 
-一个task的定义包含以下元素：
+一个task的定义包含以下元素:
 
 - [Parameters](#specifying-parameters)
 - [Resources](#specifying-resources)
@@ -50,36 +50,33 @@ weight: 1
 - [Workspaces](#specifying-workspaces)
 - [Results](#emitting-results)
 
-## Configuring a `Task`
+## 配置Task
 
-A `Task` definition supports the following fields:
+`Task`的定义支持以下属性:
 
-- Required:
-  - [`apiVersion`][kubernetes-overview] - Specifies the API version. For example,
-    `tekton.dev/v1beta1`.
-  - [`kind`][kubernetes-overview] - Identifies this resource object as a `Task` object.
-  - [`metadata`][kubernetes-overview] - Specifies metadata that uniquely identifies the
-    `Task` resource object. For example, a `name`.
-  - [`spec`][kubernetes-overview] - Specifies the configuration information for
-    this `Task` resource object.
-  - [`steps`](#defining-steps) - Specifies one or more container images to run in the `Task`.
-- Optional:
-  - [`description`](#adding-a-description) - An informative description of the `Task`.
-  - [`params`](#specifying-parameters) - Specifies execution parameters for the `Task`.
-  - [`resources`](#specifying-resources) - **alpha only** Specifies
-    [`PipelineResources`](resources.md) needed or created by your`Task`.
-    - [`inputs`](#specifying-resources) - Specifies the resources ingested by the `Task`.
-    - [`outputs`](#specifying-resources) - Specifies the resources produced by the `Task`.
-  - [`workspaces`](#specifying-workspaces) - Specifies paths to volumes required by the `Task`.
-  - [`results`](#emitting-results) - Specifies the names under which `Tasks` write execution results.
-  - [`volumes`](#specifying-volumes) - Specifies one or more volumes that will be available to the `Steps` in the `Task`.
-  - [`stepTemplate`](#specifying-a-step-template) - Specifies a `Container` step definition to use as the basis for all `Steps` in the `Task`.
-  - [`sidecars`](#specifying-sidecars) - Specifies `Sidecar` containers to run alongside the `Steps` in the `Task`.
+- 必须选项:
+  - [`apiVersion`][k8s文档] - 定义api的版本。比如`tekton.dev/v1beta1`
+  - [`kind`][k8s文档] - 定义资源类型。比如`Task`
+  - [`metadata`][k8s文档] - 定义元数据，唯一标示一个`Task`对象。比如 `name`
+  - [`spec`][k8s文档] - 配置`Task`对象详细的配置信息
+  - [`steps`](#defining-steps) - 定义一个或者多个容器镜像去执行`Task`
+- 可选选项:
+  - [`description`](#adding-a-description) - `Task`的描述信息.
+  - [`params`](#specifying-parameters) - `Task`的执行参数.
+  - [`resources`](#specifying-resources) - 测试阶段
+    [`PipelineResources`](resources.md) needed or created by your`Task`
+    - [`inputs`](#specifying-resources) - Specifies the resources ingested by the `Task`
+    - [`outputs`](#specifying-resources) - Specifies the resources produced by the `Task`
+  - [`workspaces`](#specifying-workspaces) - 为`Task`所需的volume指定挂载路径
+  - [`results`](#emitting-results) - 定义`Tasks`写执行结果的路径
+  - [`volumes`](#specifying-volumes) - 定义一个或者多个volume，被`Steps`需要
+  - [`stepTemplate`](#specifying-a-step-template) - 定义一个容器模板，被`Steps`需要
+  - [`sidecars`](#specifying-sidecars) - 定义一个`Sidecar`容器
 
-[kubernetes-overview]:
+[k8s文档]:
   https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/#required-fields
 
-The non-functional example below demonstrates the use of most of the above-mentioned fields:
+以下是一个`Task`的定义，基本包含了所有属性:
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -117,16 +114,14 @@ spec:
       emptyDir: {}
 ```
 
-### `Task` vs. `ClusterTask`
+### Task VS ClusterTask
 
-A `ClusterTask` is a `Task` scoped to the entire cluster instead of a single namespace.
-A `ClusterTask` behaves identically to a `Task` and therefore everything in this document
-applies to both.
+`ClusterTask`是可以跨命名空间的特殊`Task`
+`ClusterTask`的定义、属性等和`Task`完全一样，因此文档对于`Task`的描述同样适用于`ClusterTask`
 
-**Note:** When using a `ClusterTask`, you must explicitly set the `kind` sub-field in the `taskRef` field to `ClusterTask`.
-          If not specified, the `kind` sub-field defaults to `Task.`
+**注意:** 当使用`ClusterTask`的时候，必须将`taskRef`的子属性`kind`显示的指定为`ClusterTask`，否则`Kind`默认填充为`Task`
 
-Below is an example of a Pipeline declaration that uses a `ClusterTask`:
+下面是一个使用`ClusterTask`的例子:
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -143,27 +138,21 @@ spec:
       params: ....
 ```
 
-### Defining `Steps`
+### 定义Steps
 
-A `Step` is a reference to a container image that executes a specific tool on a
-specific input and produces a specific output. To add `Steps` to a `Task` you
-define a `steps` field (required) containing a list of desired `Steps`. The order in
-which the `Steps` appear in this list is the order in which they will execute.
+`Steps`是一个根据给定输入执行特定工具并产生特定输出的容器镜像的引用。
+若要增加`Steps`到`Task`，你需要定义`steps`属性。`Steps` 声明的顺序即实际的执行顺序
 
-The following requirements apply to each container image referenced in a `steps` field:
+以下需求适用于任何定义在`steps`中的镜像:
 
-- The container image must abide by the [container contract](./container-contract.md).
-- Each container image runs to completion or until the first failure occurs.
-- The CPU, memory, and ephemeral storage resource requests will be set to zero, or, if
-  specified, the minimums set through `LimitRanges` in that `Namespace`,
-  if the container image does not have the largest resource request out of all
-  container images in the `Task.` This ensures that the Pod that executes the `Task`
-  only requests enough resources to run a single container image in the `Task` rather
-  than hoard resources for all container images in the `Task` at once.
+- 容器镜像必须遵守[container contract](./container-contract.md)
+- 容器完成条件是执行完成或者第一次发生错误
+- 默认情况下CPU, memory, 临时存储资源请求会被设置为0。如果指定了并且没有指定最大资源请求，将会设置最小值为当前`Namespace`的`LimitRanges`。
+这将会确保一个容器有足够的资源来执行，而不是一次性给所有Pod分配够所有的资源
 
-#### Reserved directories
+#### 预留目录
 
-There are several directories that all `Tasks` run by Tekton will treat as special
+以下为预留目录:
 
 * `/workspace` - This directory is where [resources](#resources) and [workspaces](#workspaces)
   are mounted. Paths to these are available to `Task` authors via [variable substitution](variables.md)
