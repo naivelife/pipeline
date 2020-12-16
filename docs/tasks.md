@@ -7,26 +7,26 @@ weight: 1
 # Tasks
 
 - [介绍](#介绍)
-- [配置一个`Task`](#配置一个`Task`)
-  - [`Task` vs. `ClusterTask`](#`Task` vs. `ClusterTask`)
-  - [定义`Steps`](#定义`Steps`)
-    - [预留的目录](#预留的目录)
-    - [在`Steps`内执行脚本](#在`Steps`内执行脚本)
-    - [指定超时时间](#指定超时时间)
-  - [指定`Parameters`](#指定`Parameters`)
-  - [指定`Resources`](#指定`Resources`)
-  - [指定`Workspaces`](#指定`Workspaces`)
-  - [发出`results`](#发出`results`)
-  - [指定`Volumes`](#指定`Volumes`)
-  - [指定一个`Step`模板](#指定一个`Step`模板)
-  - [指定一个`Sidecars`](#指定一个`Sidecars`)
-  - [增加一个描述](#增加一个描述)
-  - [使用变量替代](#使用变量替代)
-    - [替代parameters and resources](#替代parameters and resources)
-    - [替代`Array` parameters](#替代`Array` parameters)
-    - [替代`Workspace` paths](#替代`Workspace` paths)
-    - [替代`Volume` names and types](#替代`Volume` names and types)
-- [例子](#例子)
+- [Configuring a `Task`](#configuring-a-task)
+  - [`Task` vs. `ClusterTask`](#task-vs-clustertask)
+  - [Defining `Steps`](#defining-steps)
+    - [Reserved directories](#reserved-directories)
+    - [Running scripts within `Steps`](#running-scripts-within-steps)
+    - [Specifying a timeout](#specifying-a-timeout)
+  - [Specifying `Parameters`](#specifying-parameters)
+  - [Specifying `Resources`](#specifying-resources)
+  - [Specifying `Workspaces`](#specifying-workspaces)
+  - [Emitting `results`](#emitting-results)
+  - [Specifying `Volumes`](#specifying-volumes)
+  - [Specifying a `Step` template](#specifying-a-step-template)
+  - [Specifying `Sidecars`](#specifying-sidecars)
+  - [Adding a description](#adding-a-description)
+  - [Using variable substitution](#using-variable-substitution)
+    - [Substituting parameters and resources](#substituting-parameters-and-resources)
+    - [Substituting `Array` parameters](#substituting-array-parameters)
+    - [Substituting `Workspace` paths](#substituting-workspace-paths)
+    - [Substituting `Volume` names and types](#substituting-volume-names-and-types)
+- [Code examples](#code-examples)
   - [Building and pushing a Docker image](#building-and-pushing-a-docker-image)
   - [Mounting multiple `Volumes`](#mounting-multiple-volumes)
   - [Mounting a `ConfigMap` as a `Volume` source](#mounting-a-configmap-as-a-volume-source)
@@ -38,14 +38,11 @@ weight: 1
 
 ## 介绍
 
-A `Task` is a collection of `Steps` that you
-define and arrange in a specific order of execution as part of your continuous integration flow.
-A `Task` executes as a Pod on your Kubernetes cluster. A `Task` is available within a specific
-namespace, while a `ClusterTask` is available across the entire cluster.
+`Steps`是你定义并且具有特定执行顺序的持续集成的一部分。
+`Task`是`Steps`的集合，一个`Task`会起一个Pod去执行。`Task`在指定命名空间可以访问，
+`ClusterTask`可以跨命名空间访问。
 
-一个Task是一个我们定义的并且有执行顺序的属于持续集成一部分的Steps的集合
-
-A `Task` declaration includes the following elements:
+一个task的定义包含以下元素：
 
 - [Parameters](#specifying-parameters)
 - [Resources](#specifying-resources)
@@ -152,9 +149,6 @@ A `Step` is a reference to a container image that executes a specific tool on a
 specific input and produces a specific output. To add `Steps` to a `Task` you
 define a `steps` field (required) containing a list of desired `Steps`. The order in
 which the `Steps` appear in this list is the order in which they will execute.
-
-一个step是一个根据给定输入执行特定工具并产生特定输出的容器镜像的引用。若要增加Steps到一个Task，
-你需要定一个steps属性，其包含一个Steps的列表。你声明的step的顺序就是他们的执行顺序。
 
 The following requirements apply to each container image referenced in a `steps` field:
 
