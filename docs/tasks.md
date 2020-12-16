@@ -6,8 +6,8 @@ weight: 1
 -->
 # Tasks
 
-- [Overview](#overview)
-- [Configuring a `Task`](#configuring-a-task)
+- [介绍](#overview)
+- [配置一个 `Task`](#configuring-a-task)
   - [`Task` vs. `ClusterTask`](#task-vs-clustertask)
   - [Defining `Steps`](#defining-steps)
     - [Reserved directories](#reserved-directories)
@@ -36,7 +36,7 @@ weight: 1
   - [Inspecting the file structure](#inspecting-the-file-structure)
   - [Inspecting the `Pod`](#inspecting-the-pod)
 
-## Overview
+## 介绍
 
 A `Task` is a collection of `Steps` that you
 define and arrange in a specific order of execution as part of your continuous integration flow.
