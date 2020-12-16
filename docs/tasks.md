@@ -6,8 +6,8 @@ weight: 1
 -->
 # Tasks
 
-- [介绍](#overview)
-- [配置一个 `Task`](#configuring-a-task)
+- [介绍]
+- [配置一个`Task`](#configuring-a-task)
   - [`Task` vs. `ClusterTask`](#task-vs-clustertask)
   - [Defining `Steps`](#defining-steps)
     - [Reserved directories](#reserved-directories)
